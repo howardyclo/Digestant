@@ -1,0 +1,7 @@
+notebooks
+dataset
+__pycache__
+config.json
+.ipynb_checkpoints
+*.pyc
+*.ipynb
