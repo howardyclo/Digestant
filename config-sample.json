@@ -1,0 +1,21 @@
+{
+  "twitter": {
+    "consumer_key": "",
+    "consumer_secret": "",
+    "access_token": "",
+    "access_token_secret": "",
+    "dataset_folder_path": "../dataset/twitter/",
+    "initial_crawl_tweets_count": 1000,
+    "crawl_tweets_count": 200,
+    "crawl_tweets_freq": 60,
+    "crawl_friends_freq": 3600
+  },
+  "reddit": {
+    "dataset_folder_path": "../dataset/reddit/",
+    "client_id": "",
+    "client_secret": "",
+    "password": "",
+    "user_agent": "",
+    "username": ""
+  }
+}
