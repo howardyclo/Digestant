@@ -28,6 +28,19 @@ class TwitterDataHelper(object):
         df['raw_data'] = [tweet for tweet in tweets]
         return df
 
+    def filter_tweets(self, tweets):
+        def _unwanted(tweet):
+            if tweet.lang not in ['en']:
+                return True
+            if tweet.in_reply_to_screen_name is not None:
+                return True
+            if 'RT' in tweet.text.split():
+                return True
+            if len(tweet.entities.get('urls', [])) == 0:
+                return True
+
+        return [tweet for tweet in tweets if not _unwanted(tweet)]
+
     def get_tweets(self, date_range=[]):
 
         dataset_folder_path = self.config['dataset_folder_path']
@@ -54,7 +67,7 @@ class TwitterDataHelper(object):
                 with open(tweets_file_path, 'rb') as f:
                     tweets += pickle.load(f)
 
-        return tweets
+        return self.filter_tweets(tweets)
 
     def get_data(self, date_range=[]):
         tweets =  self.get_tweets(date_range=date_range)

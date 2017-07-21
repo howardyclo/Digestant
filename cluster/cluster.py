@@ -64,6 +64,23 @@ class Cluster(object):
 
         return df
 
+    def transform(self, texts):
+        # Convert cleaned text to feature vectors
+        feature_vectors = []
+        i =  0
+        for text in texts:
+            if text.strip() == '':
+                vector = nlp.vocab[''].vector
+            else:
+                vector = np.array([[nlp.vocab[token].vector \
+                                       for token in text.split()]]).sum(axis=1).ravel()
+
+            feature_vectors.append(vector)
+
+        feature_vectors = np.array(feature_vectors)
+
+        return feature_vectors
+
     def get_best_cluster_model(self, feature_vectors):
         # Choose a good cluster number by comparing silhouette score
         range_n_clusters = [3,4,5,6,7,8]
@@ -75,6 +92,7 @@ class Cluster(object):
         for n_clusters in range_n_clusters:
 
             # Cluster
+            print(n_clusters,feature_vectors)
             model = KMeans(n_clusters=n_clusters, verbose=False).fit(feature_vectors)
 
             # Compute the mean Silhouette Coefficient of all data points.
@@ -96,12 +114,7 @@ class Cluster(object):
         print('* Transforming texts to feature vectors...')
 
         # Convert cleaned text to feature vectors
-        feature_vectors = []
-        for text in cleaned_texts:
-            feature_vectors.append(np.array([[nlp.vocab[token].vector \
-                                       for token in text.split()]]).sum(axis=1).ravel())
-
-        feature_vectors = np.array(feature_vectors)
+        feature_vectors = self.transform(cleaned_texts)
 
         print('* Clustering...')
 
