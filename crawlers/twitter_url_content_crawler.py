@@ -15,8 +15,8 @@ def get_url_content(url):
         article = Article(url)
         article.download()
         article.parse()
-        return article
-    except: return {}
+        return '|'.join([article.title, article.text])
+    except: return ''
 
 dataset_folder_path = '../dataset/'
 
@@ -43,18 +43,15 @@ if __name__ == '__main__':
     # For every URL, extract article
     data_file_path = os.path.join(dataset_folder_path, 'twitter_data_{}.pkl'.format(len(df)))
 
-    df['url_content_raw_data'] = [{} for _ in range(len(df))]
+    df['url_content'] = [{} for _ in range(len(df))]
 
     for i, url in tqdm(enumerate(df['url'])):
         # Crawl url content
-        df['url_content_raw_data'][i] = get_url_content(url)
+        df['url_content'][i] = get_url_content(url)
         # Cache
-        if i % 5 == 0:
+        if i % 10 == 0:
             print('* Caching...')
             df.to_pickle(data_file_path)
-
-        if i == 10:
-            break
 
     print('* Saving...')
     df.to_pickle(data_file_path)
