@@ -84,8 +84,11 @@ class TwitterDataHelper(object):
             tweets_file_paths =  [os.path.join(friend_folder_path, '{}.pkl'.format(date)) for date in dates if date in date_range]
 
             for tweets_file_path in tweets_file_paths:
-                with open(tweets_file_path, 'rb') as f:
-                    tweets += pickle.load(f)
+                try:
+                    with open(tweets_file_path, 'rb') as f:
+                        tweets += pickle.load(f)
+                except:
+                    continue
 
         return self.filter_tweets(tweets)
 
