@@ -39,7 +39,7 @@ class TextCleaner(object):
             self.stopwords = stopwords.words('english')
         except:
             print('! [TextCleaner] Failed to load stopwords...')
-            self.stopwords = []
+            self.stopwords =
 
     def _load_sentiment_words(self):
         print('* [TextCleaner] Loading sentinent words...')
@@ -65,7 +65,7 @@ class TextCleaner(object):
             return True
         if self.token_blacklist and token.text.lower() in self.token_blacklist:
             return True
-        if self.filter_stopwords and (token.is_stop or token.text.lower() in self.stopwords):
+        if self.filter_stopwords and (token.is_stop or token.text.lower() in self.stopword_list):
             return True
         if self.filter_url and token.like_url:
             return True
@@ -87,6 +87,6 @@ class TextCleaner(object):
         return False
 
     def clean(self, texts=[]):
-        print('* [TextCleaner] Cleaning text...')
+        print('* [TextCleaner] Cleaning text ...')
         docs = [doc for doc in tqdm(nlp.pipe(texts, batch_size=1024, n_threads=8))]
         return [[token.lemma_.lower() for token in doc if not self._unwanted_token(token)] for doc in docs]
