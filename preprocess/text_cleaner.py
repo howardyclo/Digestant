@@ -38,7 +38,7 @@ class TextCleaner(object):
         try:
             self.stopwords = stopwords.words('english')
         except:
-            print('! [TextCleaner] Failed to load stopwords...')
+            print('! [TextCleaner] Failed to load stopwords.')
             self.stopwords = []
 
     def _load_sentiment_words(self):
@@ -47,14 +47,14 @@ class TextCleaner(object):
             with open('../corpus/pos_words.txt') as f:
                 self.pos_words = [line.replace('\n', '') for line in f.readlines()]
         except:
-            print('! [TextCleaner] Failed to load positive words...')
+            print('! [TextCleaner] Failed to load positive words.')
             self.pos_words = []
 
         try:
             with open('../corpus/neg_words.txt') as f:
                 self.neg_words = [line.replace('\n', '') for line in f.readlines()]
         except:
-            print('! [TextCleaner] Failed to load negative words...')
+            print('! [TextCleaner] Failed to load negative words.')
             self.neg_words = []
 
         self.sentiment_words = self.pos_words + self.neg_words
