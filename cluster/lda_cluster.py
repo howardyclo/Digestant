@@ -9,12 +9,8 @@ from gensim.models.phrases import Phraser
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel
 
-sys.path.append('../preprocess')
-from text_cleaner import TextCleaner
-
 class LDACluster:
     """ Latent Dirichlet Allocation: Topic clustering module.
-    @param texts: List of plain text, e.g. [['How are you', 'I am fine']]
     @param docs: List of tokenized text, e.g. [['How', 'are', 'you'], ['I', 'am', 'fine']]
     """
     def __init__(self, num_topics=10, no_below=1, no_above=0.5):
@@ -45,23 +41,18 @@ class LDACluster:
 
         return new_docs
 
-    def preprocess(self, texts):
-        # Clean text and append phrases to docs.
-        text_cleaner = TextCleaner(filter_sentiment_words=True)
-        docs = text_cleaner.clean(texts)
+    def preprocess(self, docs):
+        # Append phrases to docs.
         docs = self._append_phrases_to_docs(docs)
         return docs
 
-    def transform(self, texts, preprocess=True):
+    def transform(self, docs):
         if not hasattr(self, 'model'):
             print('! [LDACluster] Please train model first by calling `fit()`.')
             return
 
-        # Clean text and append phrases to docs.
-        if preprocess:
-            docs = self.preprocess(texts)
-        else:
-            docs = texts
+        # Append phrases to docs.
+        docs = self.preprocess(docs)
 
         feature_vectors = np.zeros(shape=(len(docs), self.num_topics))
 
@@ -74,10 +65,10 @@ class LDACluster:
 
         return feature_vectors
 
-    def fit(self, texts):
+    def fit(self, docs):
 
-        # Clean text and append phrases to docs.
-        docs = self.preprocess(texts)
+        # Preprocess docs.
+        docs = self.preprocess(docs)
 
         # Build vocab.
         self._build_vocab(docs)
@@ -99,17 +90,17 @@ class LDACluster:
                               iterations=iterations, num_topics=num_topics, \
                               passes=passes, eval_every=eval_every)
 
-        self.feature_vectors = self.transform(docs, preprocess=False)
+        self.feature_vectors = self.transform(docs)
         self.labels = [np.argmax(feature_vector) for feature_vector in self.feature_vectors]
 
         return self
 
-    def predict(self, texts):
+    def predict(self, docs):
         if not hasattr(self, 'model'):
             print('! [LDACluster] Please train model first by calling `fit()`.')
             return
 
-        feature_vectors = self.transform(texts, preprocess=True)
+        feature_vectors = self.transform(docs)
         labels = [np.argmax(feature_vector) for feature_vector in feature_vectors]
 
         return labels

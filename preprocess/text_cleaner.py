@@ -1,8 +1,4 @@
 import spacy
-print('* [TextCleaner] Loading SpaCy "en_core_web_md" corpus...')
-nlp = spacy.load('en_core_web_md')
-print('* [TextCleaner] Success.')
-print('-'*116)
 
 from tqdm import tqdm
 from nltk.corpus import stopwords
@@ -25,6 +21,11 @@ class TextCleaner(object):
         self.filter_non_ascii = filter_non_ascii
         self.filter_character = filter_character
 
+        # Load spacy nlp
+        print('* [TextCleaner] Initializing...')
+
+        self._load_spacy_model()
+
         # Load NLTK stopwords
         if filter_stopwords:
             self._load_stopwords()
@@ -32,6 +33,12 @@ class TextCleaner(object):
         # Load sentinent words
         if filter_sentiment_words:
             self._load_sentiment_words()
+
+        print('-'*116)
+
+    def _load_spacy_model(self):
+        print('* [TextCleaner] Loading SpaCy "en_core_web_md" corpus...')
+        self.nlp = spacy.load('en_core_web_md')
 
     def _load_stopwords(self):
         print('* [TextCleaner] Loading stopwords...')
@@ -87,6 +94,6 @@ class TextCleaner(object):
         return False
 
     def clean(self, texts=[]):
-        print('* [TextCleaner] Cleaning text ...')
-        docs = [doc for doc in tqdm(nlp.pipe(texts, batch_size=1024, n_threads=8))]
+        print('* [TextCleaner] Cleaning text...')
+        docs = [doc for doc in tqdm(self.nlp.pipe(texts, batch_size=1024, n_threads=8))]
         return [[token.lemma_.lower() for token in doc if not self._unwanted_token(token)] for doc in docs]
