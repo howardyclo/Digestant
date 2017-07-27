@@ -60,7 +60,7 @@ class LDACluster:
             # Transform text into the bag-of-words space
             bow_vector = self.model.id2word.doc2bow(doc)
             # Transform into LDA space
-            for tup in self.model[bow_vector]:
+            for tup in self.model.get_document_topics(bow_vector, minimum_probability=0):
                 feature_vectors[i][tup[0]] = tup[1]
 
         return feature_vectors
