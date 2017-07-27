@@ -9,8 +9,8 @@ class TextCleaner(object):
                  filter_digit=True, filter_number=True, filter_pronoun=True,
                  filter_non_alpha=True, filter_non_ascii=True, filter_character=True):
 
-        self.language_whitelist = ['en']
-        self.token_blacklist = ['rt']
+        self.language_whitelist = language_whitelist
+        self.token_blacklist = token_blacklist
         self.filter_stopwords = filter_stopwords
         self.filter_sentiment_words = filter_sentiment_words
         self.filter_url = filter_url
