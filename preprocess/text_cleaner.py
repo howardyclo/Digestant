@@ -39,7 +39,7 @@ class TextCleaner(object):
             self.stopwords = stopwords.words('english')
         except:
             print('! [TextCleaner] Failed to load stopwords...')
-            self.stopwords =
+            self.stopwords = []
 
     def _load_sentiment_words(self):
         print('* [TextCleaner] Loading sentinent words...')
