@@ -44,14 +44,14 @@ class TextCleaner(object):
     def _load_sentiment_words(self):
         print('* [TextCleaner] Loading sentinent words...')
         try:
-            with open('../corpus/pos_words.txt') as f:
+            with open('../corpus/pos_words.txt', encoding='utf-8') as f:
                 self.pos_words = [line.replace('\n', '') for line in f.readlines()]
         except:
             print('! [TextCleaner] Failed to load positive words.')
             self.pos_words = []
 
         try:
-            with open('../corpus/neg_words.txt') as f:
+            with open('../corpus/neg_words.txt', encoding='utf-8') as f:
                 self.neg_words = [line.replace('\n', '') for line in f.readlines()]
         except:
             print('! [TextCleaner] Failed to load negative words.')
