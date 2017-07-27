@@ -5,7 +5,11 @@ import json
 import pickle
 import pandas as pd
 
+from tqdm import tqdm
 from datetime import date
+
+sys.path.append('../crawlers')
+from url_content_crawler import get_url_content
 
 class TwitterDataHelper(object):
     def __init__(self):
@@ -19,13 +23,29 @@ class TwitterDataHelper(object):
                 return config['twitter']
         except: return {}
 
-    def to_dataframe(self, tweets):
+    def to_dataframe(self, tweets, download_url_content=False):
         df = pd.DataFrame()
         df['source'] = ['twitter' for i in range(len(tweets))]
         df['created_at'] = [tweet.created_at.strftime('%Y-%m-%d %H:%M:%S') for tweet in tweets]
         df['author'] = [tweet.user.screen_name for tweet in tweets]
         df['text'] = [tweet.text for tweet in tweets]
+
+        if download_url_content:
+            # Extract url
+            df['url'] = [tweet.entities.get('urls', [{}])[0].get('expanded_url', '') for tweet in tweets]
+
+            # Download url content
+            df['url_content'] = [{} for _ in range(len(df))]
+
+            print('* [TwitterDataHelper] {} rows retrieved.'.format(len(df)))
+            print('* [TwitterDataHelper] Prepare to download url content for each row...')
+
+            for i, url in tqdm(enumerate(df['url'])):
+                # Crawl url content
+                df['url_content'][i] = get_url_content(url)
+
         df['raw_data'] = [tweet for tweet in tweets]
+
         return df
 
     def filter_tweets(self, tweets):
@@ -46,8 +66,8 @@ class TwitterDataHelper(object):
         dataset_folder_path = self.config['dataset_folder_path']
 
         if not os.path.exists(dataset_folder_path):
-            print('! You don\'t have a Twitter dataset folder.')
-            print('! You may want to get Twitter data by running `twitter_crawler.py` first.')
+            print('! [TwitterDataHelper] You don\'t have a Twitter dataset folder.')
+            print('! [TwitterDataHelper] You may want to get Twitter data by running `twitter_crawler.py` first.')
             return []
 
         if not date_range:
@@ -69,9 +89,9 @@ class TwitterDataHelper(object):
 
         return self.filter_tweets(tweets)
 
-    def get_data(self, date_range=[]):
+    def get_data(self, date_range=[], download_url_content=False):
         tweets =  self.get_tweets(date_range=date_range)
-        df = self.to_dataframe(tweets)
+        df = self.to_dataframe(tweets, download_url_content)
         return df
 
 if __name__ == '__main__':

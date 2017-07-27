@@ -2,25 +2,31 @@ import os
 import sys
 import pickle
 import pandas as pd
-sys.path.append('../data_helpers')
 
 from tqdm import tqdm
 from datetime import date, timedelta
-from twitter_data_helper import TwitterDataHelper
 from newspaper import Article
 
 def get_url_content(url):
-    print('Downloading "{}"'.format(url))
+    try:
+        print('Downloading "{}"'.format(url))
+    except:
+        print('Downloading url...')
+
     try:
         article = Article(url)
         article.download()
         article.parse()
-        return '|'.join([article.title, article.text])
+        content = ' | '.join([article.title, article.text])
+        return content.strip()
     except: return ''
 
 dataset_folder_path = '../dataset/'
 
 if __name__ == '__main__':
+
+    sys.path.append('../data_helpers')
+    from twitter_data_helper import TwitterDataHelper
 
     # Get data range
     start = date(2000, 1, 1)
@@ -48,10 +54,6 @@ if __name__ == '__main__':
     for i, url in tqdm(enumerate(df['url'])):
         # Crawl url content
         df['url_content'][i] = get_url_content(url)
-        # Cache
-        if i % 10 == 0:
-            print('* Caching...')
-            df.to_pickle(data_file_path)
 
     print('* Saving...')
     df.to_pickle(data_file_path)
