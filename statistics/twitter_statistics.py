@@ -9,6 +9,7 @@ import pandas as pd
 sys.path.append('../data_helpers/')
 from data_aggregator import DataAggregator
 
+from collections import Counter
 from datetime import date
 from datetime import datetime, timedelta
 from math import log
@@ -81,6 +82,34 @@ class TwitterStatistics(object):
     def clean_url(self, text):
         URLless_text = re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
         return URLless_text
+    
+    def top_hashtags(self, X):
+        h = []
+        for tweet in self.tweets:
+            a = [hashtags.get('text') for hashtags in tweet.entities.get('hashtags')]
+            if len(a) > 0:
+                h += a
+            else:
+                continue
+                
+        C = Counter(h)
+        hashtags_l = [ [k,]*v for k,v in C.items()]
+        a = sorted(hashtags_l,key = len, reverse=True)
+        b = a[:X]
+        return [t[0] for t in b]
+    
+    def top_mentions(self, X):
+        h = []
+        for tweet in self.tweets:
+            user_name = tweet.user.screen_name
+            usermentions = [usermentions.get('screen_name') for usermentions in tweet.entities.get("user_mentions")]
+            if len(usermentions) > 0:
+                h.extend(usermentions)
+            else:
+                continue
+
+        c = Counter(h)
+        return c.most_common(X)
 
 if __name__ == '__main__':
     data_helper = DataAggregator()
