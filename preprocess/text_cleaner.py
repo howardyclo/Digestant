@@ -65,7 +65,7 @@ class TextCleaner(object):
             return True
         if self.token_blacklist and token.text.lower() in self.token_blacklist:
             return True
-        if self.filter_stopwords and (token.is_stop or token.text.lower() in self.stopword_list):
+        if self.filter_stopwords and (token.is_stop or token.text.lower() in self.stopwords):
             return True
         if self.filter_url and token.like_url:
             return True
