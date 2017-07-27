@@ -5,3 +5,4 @@ config.json
 .ipynb_checkpoints
 *.pyc
 *.ipynb
+model
