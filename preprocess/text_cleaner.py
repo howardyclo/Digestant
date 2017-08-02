@@ -4,13 +4,15 @@ from tqdm import tqdm
 from nltk.corpus import stopwords
 
 class TextCleaner(object):
-    def __init__(self, language_whitelist=['en'], token_blacklist=['rt'],
+    def __init__(self, language_whitelist=['en'], token_blacklist=['rt'], lowercase=True, lemmatize=True,
                  filter_stopwords=True, filter_sentiment_words=False, filter_url=True,
                  filter_digit=True, filter_number=True, filter_pronoun=True,
                  filter_non_alpha=True, filter_non_ascii=True, filter_character=True):
 
         self.language_whitelist = language_whitelist
         self.token_blacklist = token_blacklist
+        self.lowercase = lowercase
+        self.lemmatize = lemmatize
         self.filter_stopwords = filter_stopwords
         self.filter_sentiment_words = filter_sentiment_words
         self.filter_url = filter_url
@@ -96,4 +98,13 @@ class TextCleaner(object):
     def clean(self, texts=[]):
         print('* [TextCleaner] Cleaning text...')
         docs = [doc for doc in tqdm(self.nlp.pipe(texts, batch_size=1024, n_threads=8))]
-        return [[token.lemma_.lower() for token in doc if not self._unwanted_token(token)] for doc in docs]
+
+        if self.lemmatize:
+            docs = [[token.lemma_ for token in doc if not self._unwanted_token(token)] for doc in docs]
+        else:
+            docs = [[token.text for token in doc if not self._unwanted_token(token)] for doc in docs]
+
+        if self.lowercase:
+            docs = [[token.lower() for token in doc] for doc in docs]
+
+        return docs
