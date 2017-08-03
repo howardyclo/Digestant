@@ -12,6 +12,9 @@ class GoogleDataHelper(object):
     def __init__(self):
         self.go = GoogleSearch()
 
+    def get_config(self):
+        pass
+
     def get_data(self, querystring='deeplearning', num=10):
         query = self.go.prune(querystring)
         self.go.doquery(query, num)
