@@ -17,5 +17,9 @@
     "password": "",
     "user_agent": "",
     "username": ""
+  },
+  "google":{
+      "api_key": "",
+      "search_id": ""
   }
 }
