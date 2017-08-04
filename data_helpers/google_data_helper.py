@@ -26,7 +26,7 @@ class GoogleDataHelper(object):
         df['source'] = ['google' for i in range(len(result))]
         df['created_at'] = [created_at for i in range(len(result))]
         df['author'] = [tup[1] for tup in result]
-        df['text'] = ['|'.join([tup[0],tup[2]]) for tup in result]
+        df['text'] = [' | '.join([tup[0],tup[2]]) for tup in result]
         df['raw_data'] = [tup for tup in result]
 
         return df

@@ -34,7 +34,7 @@ class RedditDataHelper(object):
 
         for submission in submissions:
             created_at.append(date.fromtimestamp(submission.created).strftime('%Y-%m-%d'))
-            author.append('{}|{}'.format(submission.subreddit, submission.author.name))
+            author.append('{} | {}'.format(submission.subreddit, submission.author.name))
             text.append(submission.title)
             raw_data.append(submission)
 
