@@ -15,7 +15,7 @@ class GoogleDataHelper(object):
     def get_config(self):
         pass
 
-    def get_data(self, querystring='deeplearning', num=10):
+    def get_data(self, querystring='deep learning', num=10):
         query = self.go.prune(querystring)
         self.go.doquery(query, num)
         result = self.go.showpage(num)

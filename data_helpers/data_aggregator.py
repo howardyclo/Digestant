@@ -21,7 +21,7 @@ class DataAggregator(object):
 
     def get_data(self, date_range=[]):
         twitter_df = self.twitter_data_helper.get_data(date_range=date_range)
-        reddit_df = self.reddit_data_helper.get_data()
+        reddit_df = self.reddit_data_helper.get_data(date_range=date_range)
         google_df = self.google_data_helper.get_data()
         df = pd.concat([twitter_df, reddit_df, google_df], axis=0, ignore_index=True)
         return df
