@@ -26,22 +26,43 @@ class RedditDataHelper(object):
         except: return {}
 
     def to_dataframe(self, submissions):
+
+        created_at = []
+        author = []
+        text = []
+        raw_data = []
+
+        for submission in submissions:
+            created_at.append(date.fromtimestamp(submission.created).strftime('%Y-%m-%d'))
+            author.append('{}|{}'.format(submission.subreddit, submission.author.name))
+            text.append(submission.title)
+            raw_data.append(submission)
+
         df = pd.DataFrame()
         df['source'] = ['reddit' for i in range(len(submissions))]
-        df['created_at'] = [date.fromtimestamp(submission.created).strftime('%Y-%m-%d') for submission in submissions]
-        df['author'] = [submission.author.name for submission in submissions]
-        df['text'] = [submission.title for submission in submissions]
-        df['raw_data'] = [submission for submission in submissions]
+        df['created_at'] = created_at
+        df['author'] = author
+        df['text'] = text
+        df['raw_data'] = raw_data
+
         return df
 
-    def get_submissions(self, channel='MachineLearning', querystring='deeplearning'):
-        submission_generator = self.reddit.subreddit(channel).search(querystring)
-        submissions = [submission for submission in submission_generator]
+    def get_submissions(self, date_range=[]):
+        if not date_range:
+            date_range = [date.today().strftime('%Y-%m-%d')]
+
+        channels = '+'.join(self.config['channels'])
+
+        submissions = [submission for submission in self.reddit.subreddit(channels).new()
+                        if date.fromtimestamp(submission.created).strftime('%Y-%m-%d') in date_range]
+
         return submissions
 
-    def get_data(self, channel='MachineLearning', querystring='deeplearning'):
+    def get_data(self, date_range=[]):
+        if not date_range:
+            date_range = [date.today().strftime('%Y-%m-%d')]
 
-        submissions = self.get_submissions(channel='MachineLearning', querystring='deeplearning')
+        submissions = self.get_submissions(date_range)
         df = self.to_dataframe(submissions)
         return df
 

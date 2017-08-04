@@ -16,7 +16,13 @@
     "client_secret": "",
     "password": "",
     "user_agent": "",
-    "username": ""
+    "username": "",
+    "channels": [
+      "artifial", "BigDataJobs", "CompressiveSensing", "computervision", "datacleaning",
+      "dataisbeautiful", "datascience", "DataScienceJobs", "deeplearning", "DeepLearningPapers",
+      "LanguageTechnology", "learnmachinelearning", "MachineLearning", "MLjobs", "mlpapers",
+      "MLQuestions"
+    ]
   },
   "google":{
       "api_key": "",
