@@ -27,7 +27,6 @@ class RedditStatistics(object):
 
     def get_stats(self):
         df = pd.DataFrame()
-        df = pd.DataFrame()
         df['source'] = ['reddit' for i in range(len(self.submissions))]
         df['created_at'] = [date.fromtimestamp(submission.created).strftime('%Y-%m-%d') for submission in self.submissions]
         df['author'] = [submission.author.name for submission in self.submissions]

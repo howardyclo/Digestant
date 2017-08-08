@@ -10,14 +10,14 @@ from datetime import date
 
 class RedditDataHelper(object):
     def __init__(self):
-        self.config = self.get_config()
+        self.config = self._get_config()
         self.reddit = praw.Reddit(client_id=self.config['client_id'],
                                   client_secret=self.config['client_secret'],
                                   password=self.config['password'],
                                   user_agent=self.config['user_agent'],
                                   username=self.config['username'])
 
-    def get_config(self):
+    def _get_config(self):
         # Load config from json.
         try:
             with open('../config.json') as f:
@@ -25,25 +25,31 @@ class RedditDataHelper(object):
                 return config['reddit']
         except: return {}
 
-    def to_dataframe(self, submissions):
+    def _to_dataframe(self, submissions, keep_raw_data=True):
 
         created_at = []
         author = []
         text = []
+        url = []
         raw_data = []
 
         for submission in submissions:
             created_at.append(date.fromtimestamp(submission.created).strftime('%Y-%m-%d'))
             author.append('{} | {}'.format(submission.subreddit, submission.author.name))
             text.append(submission.title)
-            raw_data.append(submission)
+            url.append(submission.url)
+            if keep_raw_data:
+                raw_data.append(submission)
 
         df = pd.DataFrame()
         df['source'] = ['reddit' for i in range(len(submissions))]
         df['created_at'] = created_at
         df['author'] = author
         df['text'] = text
-        df['raw_data'] = raw_data
+        df['url'] = url
+
+        if keep_raw_data:
+            df['raw_data'] = raw_data
 
         return df
 
@@ -58,12 +64,12 @@ class RedditDataHelper(object):
 
         return submissions
 
-    def get_data(self, date_range=[]):
+    def get_data(self, date_range=[], keep_raw_data=True):
         if not date_range:
             date_range = [date.today().strftime('%Y-%m-%d')]
 
         submissions = self.get_submissions(date_range)
-        df = self.to_dataframe(submissions)
+        df = self._to_dataframe(submissions, keep_raw_data)
         return df
 
 if __name__ == '__main__':

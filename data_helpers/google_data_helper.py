@@ -12,14 +12,10 @@ class GoogleDataHelper(object):
     def __init__(self):
         self.go = GoogleSearch()
 
-    def get_config(self):
+    def _get_config(self):
         pass
 
-    def get_data(self, querystring='deep learning', num=10):
-        query = self.go.prune(querystring)
-        self.go.doquery(query, num)
-        result = self.go.showpage(num)
-
+    def _to_dataframe(self, result, keep_raw_data=True):
         df = pd.DataFrame()
 
         created_at = date.today().strftime('%Y-%m-%d')
@@ -27,7 +23,17 @@ class GoogleDataHelper(object):
         df['created_at'] = [created_at for i in range(len(result))]
         df['author'] = [tup[1] for tup in result]
         df['text'] = [' | '.join([tup[0],tup[2]]) for tup in result]
-        df['raw_data'] = [tup for tup in result]
+        df['url'] = [tup[1] for tup in result]
+
+        if keep_raw_data:
+            df['raw_data'] = [tup for tup in result]
+
+    def get_data(self, querystring='deep learning', num=10, keep_raw_data=True):
+        query = self.go.prune(querystring)
+        self.go.doquery(query, num)
+        result = self.go.showpage(num)
+
+        df = self._to_dataframe(result, keep_raw_data)
 
         return df
 

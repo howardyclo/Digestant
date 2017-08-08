@@ -13,9 +13,9 @@ from url_content_crawler import get_url_content
 
 class TwitterDataHelper(object):
     def __init__(self):
-        self.config = self.get_config()
+        self.config = self._get_config()
 
-    def get_config(self):
+    def _get_config(self):
         # Load config from json.
         try:
             with open('../config.json') as f:
@@ -23,17 +23,15 @@ class TwitterDataHelper(object):
                 return config['twitter']
         except: return {}
 
-    def to_dataframe(self, tweets, download_url_content=False):
+    def _to_dataframe(self, tweets, download_url_content=False, keep_raw_data=True):
         df = pd.DataFrame()
         df['source'] = ['twitter' for i in range(len(tweets))]
         df['created_at'] = [tweet.created_at.strftime('%Y-%m-%d %H:%M:%S') for tweet in tweets]
         df['author'] = [tweet.user.screen_name for tweet in tweets]
         df['text'] = [tweet.text for tweet in tweets]
+        df['url'] = [tweet.entities.get('urls', [{}])[0].get('expanded_url', '') for tweet in tweets]
 
         if download_url_content:
-            # Extract url
-            df['url'] = [tweet.entities.get('urls', [{}])[0].get('expanded_url', '') for tweet in tweets]
-
             # Download url content
             df['url_content'] = [{} for _ in range(len(df))]
 
@@ -44,7 +42,8 @@ class TwitterDataHelper(object):
                 # Crawl url content
                 df['url_content'][i] = get_url_content(url)
 
-        df['raw_data'] = [tweet for tweet in tweets]
+        if keep_raw_data:
+            df['raw_data'] = [tweet for tweet in tweets]
 
         return df
 
@@ -92,12 +91,12 @@ class TwitterDataHelper(object):
 
         return self.filter_tweets(tweets)
 
-    def get_data(self, date_range=[], download_url_content=False):
+    def get_data(self, date_range=[], download_url_content=False, keep_raw_data=True):
         if not date_range:
             date_range = [date.today().strftime('%Y-%m-%d')]
-            
+
         tweets =  self.get_tweets(date_range=date_range)
-        df = self.to_dataframe(tweets, download_url_content)
+        df = self._to_dataframe(tweets, download_url_content, keep_raw_data)
         return df
 
 if __name__ == '__main__':
