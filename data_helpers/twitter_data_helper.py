@@ -93,6 +93,9 @@ class TwitterDataHelper(object):
         return self.filter_tweets(tweets)
 
     def get_data(self, date_range=[], download_url_content=False):
+        if not date_range:
+            date_range = [date.today().strftime('%Y-%m-%d')]
+            
         tweets =  self.get_tweets(date_range=date_range)
         df = self.to_dataframe(tweets, download_url_content)
         return df
