@@ -17,8 +17,15 @@ class StatisticsAggregator(object):
     def get_config(self):
         pass
 
-    def get_stats(self):
+    def get_stats(self, date_range=[]):
         twitter_df = self.twitter_statistics.get_stats()
         reddit_df = self.reddit_statistics.get_stats()
         df = pd.concat([twitter_df, reddit_df], axis=0, ignore_index=True)
         return df
+
+if __name__ == '__main__':
+    data_helper = DataAggregator()
+    date_range = [date.today().strftime('%Y-%m-%d')] # Only today.
+    df = data_helper.get_data(date_range=date_range)
+    try: print(df.to_string())
+    except: sys.stdout.buffer.write(df.to_string().encode('utf-8'))

@@ -1,0 +1,31 @@
+{
+  "dataset": ["kaggle.com"],
+    
+  "code": ["github.com",
+           "codedump.io",
+           "github.io"],
+      
+  "paper": ["arxiv.com",
+            ".pdf",
+            "arxiv.org"],
+      
+  "tutorial": ["youtube.com",
+               "coursera.com",
+               "edx.com"],
+      
+  "social-media": ["facebook.com",
+                   "twitter.com"],
+      
+  "blog": [".wordpress.com",
+           ".blogspot.com",
+           "medium.com",
+           "blog"],
+      
+  "shortened-link": ["bit.ly",
+                     "goo.gl"],
+  "news": ["bbc.com",
+           "cnn.com",
+           "foxnews.com",
+           "news"]
+}
+  

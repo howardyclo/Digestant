@@ -1,0 +1,8 @@
+{
+  "reddit": ["/r/artifial", "/r/BigDataJobs", "/r/CompressiveSensing", "/r/computervision", "/r/datacleaning",
+  "/r/dataisbeautiful", "/r/datascience", "/r/DataScienceJobs", "/r/deeplearning", "/r/DeepLearningPapers",
+  "/r/LanguageTechnology", "/r/learnmachinelearning", "/r/MachineLearning", "/r/MLjobs", "/r/mlpapers",
+  "/r/MLQuestions"],
+
+  "twitter": ["/status/"]
+}
