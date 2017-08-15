@@ -6,3 +6,4 @@ config.json
 *.pyc
 *.ipynb
 model
+.DS_Store

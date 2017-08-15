@@ -27,7 +27,7 @@ class GoogleSearch:
     def __init__(self):
         self.content = ''
         self.hitrule = []
-        self.url = 'https://www.google.com.tw/search?q='
+        self.url = 'https://www.google.com/search?q='
 
     def prune(self,query):
         querys = [x for(x) in query.split(" ") if len(x)>0]
