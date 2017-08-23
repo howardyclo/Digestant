@@ -13,9 +13,9 @@ import numpy as np
 class DataOrganizer(object):
     def __init__(self, df):
         self.df = df
-        self.data = self.get_data(df)
+        self.encode_data(df)
         self.domains = self.get_domains()
-        self.results = self.google_search()
+        #self.results = self.google_search()
         self.hotness = self.get_hotness(df)
 
     def get_hotness(self, df):
@@ -25,29 +25,15 @@ class DataOrganizer(object):
         sdf = stats_helper.get_stats()
         return sdf['hotness']
         
-    def get_data(self, df):
-        a = df[df['source'] == "twitter"].index.tolist()
-        tweet = [df["raw_data"][index].text for index in a]
-        tweets = [self.clean(t) for t in tweet]
-
-        a = df[df['source'] == "reddit"].index.tolist()
-        subs = [df["raw_data"][index].title for index in a]
-
-        data = tweets + subs
-        return data
+    def encode_data(self, df):
+        a = [t.encode('utf-8').strip() for t in df['text']]
+        df['cleaned_text'] = a
 
     def get_domains(self):
         with open("../domains.json", "r") as f:
             domains = json.load(f)
 
         return domains
-
-
-    def clean(self, text):
-        URLless_text = re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
-        regex = re.compile('[^a-zA-Z]')
-        cleaned_text = regex.sub(' ', URLless_text)
-        return cleaned_text
 
     def in_domain(self, url):
 
@@ -59,49 +45,39 @@ class DataOrganizer(object):
                     continue
         return ""
 
-    def google_search(self, num=10):
-        results = []
-        gd = GoogleDataHelper()
-        print("* Google Searching Data...")
-        for d, i in zip(self.data, range(len(self.data))):
-            try:
-                d = self.clean(d)
-                print("* * Downloading ({}/{}) query".format(i+1, len(self.data)), end="\r")
-                r = gd.get_data(querystring=d)
-            except Exception as e:
-                print("* * cannot download query ({}) because: ({})".format(i, str(e)))
-                r = pd.DataFrame()
-                continue
-
-            results.append(r)
-            sleep(5) #minimum time to not look like a bot/script
-
-        print("* Download complete! ")
-        return results
-
     def enhance(self, num=10):
-
-        df = pd.DataFrame(columns=(list(self.domains.keys())))
-        df["data"] = self.data
-        df['source'] = self.df['source']
-        df['results'] = self.results
-        df['hotness'] = self.hotness
-
-        for r, i in zip(self.results, range(len(self.results))):
-
-            for d in self.domains:
-                df[d][i] = []
-
-            types = []
-            type_dict = {}
-            for url, text in zip(r['author'], r['text']):
-                _type = self.in_domain(url)
-
-                if _type != "":
-                    t = (url, text)
-                    df[_type][i].append(t)
-
-        return df
+        from search_engine import SearchEngine
+        se = SearchEngine()
+        
+        print("*[Data Organizer] Downloading Google Search Results")
+        results = se.get_data(queries=self.df['cleaned_text'])
+        
+        results_t = []
+        d = {}
+        for r in results.items():
+            tu = []
+            for url, text in zip(r[1]['url'], r[1]['text']):
+                tu.append((url, text))
+            d = {'source_text': r[0], 'result': tu}
+            results_t.append(d)
+            
+        
+        self.df['google-search'] = [i for i in range(len(self.df))]
+        for d, i in zip(self.df['cleaned_text'], range(len(self.df))):
+            for r in results_t:
+                if str(r['source_text']) == str(d):
+                    self.df['google-search'][i] = r['result']
+        
+        q = []
+        for gs in self.df['google-search']:
+            types = dict((el, []) for el in list(self.domains))
+            for result in gs:
+                _type = self.in_domain(result[0])
+                if _type != "": types[_type].append(result)
+            q.append(types)
+            
+        self.df['types'] = q
+        return self.df
     
     def top(self, edf, num=3):
         a = edf.drop(list(set(edf.keys()) - set(self.domains.keys())), axis=1)
@@ -129,10 +105,9 @@ class SummarizeNER(object):
 
 
     def get_summarized_data(self):
-        wikidf = pd.DataFrame(columns=("NER", "Summary"))
-        wikidf["NER"] = self.cleaned_phrases
-        wikidf["Summary"] = self.get_wiki_summary()
-        return wikidf
+        self.data['NER'] = self.cleaned_phrases
+        self.data['Wiki-NER-Sumarry'] = self.get_wiki_summary()
+        return self.data
 
     def del_repeat(self, seq):
         seen = set()
@@ -143,17 +118,20 @@ class SummarizeNER(object):
         wiki_summary = []
         
         for phrase, i in zip(self.cleaned_phrases, range(len(self.cleaned_phrases))):
-            print("Downloading ({}/{}) wikipedia page...".format(i+1, len(self.cleaned_phrases)), end="\r")
-            try:
-                summary = wikipedia.summary(phrase, sentences=sentences)
-            except Exception as e:
+            if phrase != 'N/A':
+                print("Downloading wikipedia pages...".format(i+1, len(self.cleaned_phrases)), end="\r")
                 try:
-                    a = str(e).splitlines()[1]
-                    summary = wikipedia.summary(a, sentences=sentences)
-                except:
-                    summary = "No wikipedia page found"
+                    summary = wikipedia.summary(phrase[0], sentences=sentences)
+                except Exception as e:
+                    try:
+                        a = str(e).splitlines()[1]
+                        summary = wikipedia.summary(a, sentences=sentences)
+                    except:
+                        summary = "No wikipedia page found"
+                        pass
                     pass
-                pass
+            else:
+                summary = "No wikipedia page found"
     
             wiki_summary.append(summary)
             
@@ -180,30 +158,24 @@ class SummarizeNER(object):
         
         tokenized_list = [ct.split() for ct in self.cleaned_data]
         NERTags = st.tag_sents(tokenized_list)
-
-        n = []
-        for nt in NERTags:
-            n.extend(nt)
-
-        ids = []
-        #get the indexes of all words that have NER tags
-        ids = [i for a, i in zip(n, range(len(n))) if a[1] != "O"]
-        a = np.array(ids)
-
-        consecutive_ids = np.split(a, np.where(np.diff(a) != 1)[0]+1)
-
+        
+        tags = [nt for nt in NERTags]
+        ids = [[i for a, i in zip(t, range(len(t))) if a[1] != "O"] for t in tags]
+        
         phrases = []
-        for ci in consecutive_ids:
+        for i, t in zip(ids, tags):
             phrase = ""
-            tag = ""
-            for id_ in ci:
-                phrase += "{} ".format(n[id_][0])
+            tt = "N/A"
+            for p, index in zip(i, range(len(i))):
+                if index == len(i) - 1:
+                    phrase += "{}".format(t[p][0])
+                    tt = phrase, t[p][1]
+                else:
+                    phrase += "{} ".format(t[p][0])
 
-            tag += "{}".format(n[id_][1])
-            phrases.append(phrase)
-
-        cleaned_phrases = self.del_repeat(phrases)
-        return cleaned_phrases
+            phrases.append(tt)
+        return phrases
+        
 
     if __name__ == '__main__':
         data_helper = DataAggregator()

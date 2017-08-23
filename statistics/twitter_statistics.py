@@ -5,6 +5,7 @@ import re
 
 import numpy as np
 import pandas as pd
+import json
 
 sys.path.append('../data_helpers/')
 from data_aggregator import DataAggregator
@@ -32,10 +33,14 @@ class TwitterStatistics(object):
         df['created_at'] = [tweet.created_at.strftime('%Y-%m-%d %H:%M:%S') for tweet in self.tweets]
         df['author'] = [tweet.user.screen_name for tweet in self.tweets]
         df['text'] = [tweet.text for tweet in self.tweets]
+        a = self.df[self.df['source'] == "twitter"].index.tolist()
+        df['url'] = [self.df["url"][index] for index in a]
+        df['raw_data'] = self.tweets
         df['hotness'] = self.score()
         sentiment_score = self.sentiment_score()
         df['sentiment_polarity'] = sentiment_score
         df["sentiment"] = pd.Series(self.sentiment(sentiment_score), dtype="category")
+        df['type'] = [self.what_type(url) for url in df['url']]
         return df
 
     def hot(self, ups, downs, date):
@@ -69,14 +74,13 @@ class TwitterStatistics(object):
     def sentiment(self, sentiment_score):
         sentiment = []
         for ss in sentiment_score:
-            s = max(ss, key=ss.get)
-            if s == "pos":
+            
+            if ss['compound'] >= 0.5:
                 sentiment.append("pos")
-            elif s == " neg":
-                sentiment.append("neg")
-            else:
+            elif ss['compound'] > -0.5 and ss['compound'] < 0.5:
                 sentiment.append("neu")
-
+            elif ss['compound'] <= 0.5:
+                sentiment.append("neg")
         return sentiment
 
     def clean_url(self, text):
@@ -110,7 +114,38 @@ class TwitterStatistics(object):
 
         c = Counter(h)
         return c.most_common(X)
+    
+    def get_types(self):
+        with open('../types.json') as f:
+            return json.load(f)
+        
+    def get_domains(self):
+        with open('../domains.json') as f:
+            return json.load(f)
+    
+    def what_type(self, url):
+        types = self.get_types()
+        domains = self.get_domains()
+        
+        for key, value in types.items():
+            for v in value:
+                if v in url:
+                    if key == 'reddit':
+                        return 'subreddit: {}'.format(v)
+                    if key == 'twitter':
+                        return 'twitter status'
+                else:
+                    continue
 
+        for d in domains:
+            for urls in domains[d]:
+                if urls in url:
+                    return d
+                else:
+                    continue
+
+        return "unknown link"
+    
 if __name__ == '__main__':
     data_helper = DataAggregator()
     date_range = [date.today().strftime('%Y-%m-%d')] # Only today.

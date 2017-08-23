@@ -27,13 +27,13 @@ class RedditStatistics(object):
 
     def get_stats(self):
         df = pd.DataFrame()
-        df = pd.DataFrame()
         df['source'] = ['reddit' for i in range(len(self.submissions))]
         df['created_at'] = [date.fromtimestamp(submission.created).strftime('%Y-%m-%d') for submission in self.submissions]
         df['author'] = [submission.author.name for submission in self.submissions]
         df['text'] = [submission.title for submission in self.submissions]
         a = self.df[self.df['source'] == "reddit"].index.tolist()
         df['url'] = [self.df["url"][index] for index in a]
+        df['raw_data'] = self.submissions
         df["hotness"] = self.score()
         sentiment_score = self.sentiment_score()
         df["sentiment_polarity"] = sentiment_score

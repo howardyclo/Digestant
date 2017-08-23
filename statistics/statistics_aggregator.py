@@ -12,8 +12,9 @@ from twitter_statistics import TwitterStatistics
 class StatisticsAggregator(object):
     def __init__(self, df):
         self.reddit_statistics = RedditStatistics(df)
-        self.twitter_statistics = TwitterStatistics(df)
-
+        self.twitter_statistics = TwitterStatistics(df)        
+        
+    
     def get_config(self):
         pass
 
