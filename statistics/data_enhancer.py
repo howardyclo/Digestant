@@ -3,7 +3,6 @@ import sys
 import re
 import pandas as pd
 sys.path.append('../data_helpers/')
-from google_data_helper import GoogleDataHelper
 from data_aggregator import DataAggregator
 from time import sleep
 import json

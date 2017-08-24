@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import sys, pycurl
 try:
     from StringIO import StringIO

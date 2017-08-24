@@ -8,13 +8,11 @@ import pandas as pd
 from datetime import date
 from twitter_data_helper import TwitterDataHelper
 from reddit_data_helper import RedditDataHelper
-from google_data_helper import GoogleDataHelper
 
 class DataAggregator(object):
     def __init__(self):
         self.twitter_data_helper = TwitterDataHelper()
         self.reddit_data_helper = RedditDataHelper()
-        self.google_data_helper  = GoogleDataHelper()
 
     def get_config(self):
         pass
