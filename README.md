@@ -9,7 +9,7 @@ See [introduction slides](https://docs.google.com/presentation/d/18flIvwADXwQum-
 - Download SpaCy **`en_core_web_md`** model: `$ python -m spacy download en_core_web_md`.
 - Download Stanford NER model
   1. Download from [the official website](https://nlp.stanford.edu/software/stanford-ner-2017-06-09.zip).
-  2. Place the downloaded `stanford-ner-xxxx-xx-xx` folder the project root path. The name of folder should also be **`stanford-ner/`**
+  2. Place the downloaded `stanford-ner-xxxx-xx-xx` folder the project root path. The name of folder should also be **`stanford-ner/`**.
 
 ## Configuration
   1. First, copy `config-sample.json` and rename it to `config.json` in the same directory. Remember to fill the keys in `config.json`.
