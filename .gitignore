@@ -6,4 +6,4 @@ config.json
 model
 .DS_Store
 .scrapecache
-stanford-ner
+stanford-ner/
