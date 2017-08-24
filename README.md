@@ -5,14 +5,10 @@ See [introduction slides](https://docs.google.com/presentation/d/18flIvwADXwQum-
 - Python 3.x
 
 ## Setup
-- NLTK data
-  Download NLTK data: `$ python -m nltk.downloader all`.
-
-- SpaCy model
-  Download SpaCy **`en_core_web_md`** model: `$ python -m spacy download en_core_web_md`.
-
-- Stanford NER model
-  1. Download Stanford NER model from [the official website](https://nlp.stanford.edu/software/stanford-ner-2017-06-09.zip).
+- Download NLTK data: `$ python -m nltk.downloader all`.
+- Download SpaCy **`en_core_web_md`** model: `$ python -m spacy download en_core_web_md`.
+- Download Stanford NER model
+  1. Download from [the official website](https://nlp.stanford.edu/software/stanford-ner-2017-06-09.zip).
   2. Place the downloaded `stanford-ner-xxxx-xx-xx` folder the project root path. The name of folder should also be **`stanford-ner/`**
 
 ## Configuration
