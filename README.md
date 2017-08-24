@@ -5,6 +5,8 @@ See [introduction slides](https://docs.google.com/presentation/d/18flIvwADXwQum-
 - Python 3.x
 
 ## Setup
+- Recommend to create a new virtual environment to manage your python project.
+- Download python packages from `requirements.txt`: `$ pip install -r requirements.txt`.
 - Download NLTK data: `$ python -m nltk.downloader all`.
 - Download SpaCy **`en_core_web_md`** model: `$ python -m spacy download en_core_web_md`.
 - Download Stanford NER model
