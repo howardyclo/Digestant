@@ -1,5 +1,5 @@
 # Digestant
-See more on [introduction slides](https://docs.google.com/presentation/d/18flIvwADXwQum-8xY6I3nSSQmWzqJCRrtQa9y23zVcM/edit?usp=sharing) and [project survey](https://hackmd.io/s/rkh_rJY4-), [demo](https://github.com/YuChunLOL/Digestant/blob/master/demo/demo_howard.ipynb).
+See more on [introduction slides](https://docs.google.com/presentation/d/18flIvwADXwQum-8xY6I3nSSQmWzqJCRrtQa9y23zVcM/edit?usp=sharing), [project survey](https://hackmd.io/s/rkh_rJY4-) and [demo](https://github.com/YuChunLOL/Digestant/blob/master/demo/demo_howard.ipynb).
 
 ## Dev Environment
 - Python 3.x
