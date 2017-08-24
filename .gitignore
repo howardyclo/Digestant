@@ -1,4 +1,3 @@
-notebooks
 dataset
 __pycache__
 config.json
@@ -7,3 +6,5 @@ config.json
 *.ipynb
 model
 .DS_Store
+.ipynb_checkpoints
+.scrapecache

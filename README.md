@@ -1,4 +1,5 @@
 # Digestant
+See [project survey](https://hackmd.io/s/rkh_rJY4-)
 
 ## Setup
 1. First, copy `config-sample.json` and rename it to `config.json` in the same directory. Remember to fill the keys in `config.json`.
