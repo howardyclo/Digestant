@@ -4,7 +4,7 @@ from tqdm import tqdm
 from nltk.corpus import stopwords
 
 class TextCleaner(object):
-    def __init__(self, language_whitelist=['en'], token_blacklist=['rt'], lowercase=True, lemmatize=True,
+    def __init__(self, language_whitelist=['en'], token_blacklist=['rt', 'oc'], lowercase=True, lemmatize=True,
                  filter_stopwords=True, filter_sentiment_words=False, filter_url=True,
                  filter_digit=True, filter_number=True, filter_pronoun=True,
                  filter_non_alpha=True, filter_non_ascii=True, filter_character=True):
