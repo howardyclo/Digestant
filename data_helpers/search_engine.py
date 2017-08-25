@@ -24,6 +24,17 @@ class SearchEngine(object):
         self.queries_filepath = queries_filepath
         self.output_filepath = output_filepath
 
+        """ Create folders """
+        folderpath, _ = os.path.split(self.queries_filepath)
+        if not os.path.exists(folderpath):
+            print('[SearchEngine] Creating empty folder "{}"...'.format(folderpath))
+            os.mkdir(folderpath)
+
+        folderpath, _ = os.path.split(self.output_filepath)
+        if not os.path.exists(folderpath):
+            print('[SearchEngine] Creating empty folder "{}"...'.format(folderpath))
+            os.mkdir(folderpath)
+
     def _to_dataframe(self, result, keep_raw_data=False):
 
         df = pd.DataFrame()

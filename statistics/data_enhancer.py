@@ -23,7 +23,7 @@ class DataOrganizer(object):
         stats_helper = StatisticsAggregator(df)
         sdf = stats_helper.get_stats()
         return sdf['hotness']
-        
+
     def encode_data(self, df):
         a = [t.encode('utf-8').strip() for t in df['text']]
         df['cleaned_text'] = a
@@ -47,10 +47,10 @@ class DataOrganizer(object):
     def enhance(self, num=10):
         from search_engine import SearchEngine
         se = SearchEngine()
-        
+
         print("*[Data Organizer] Downloading Google Search Results")
         results = se.get_data(queries=self.df['cleaned_text'])
-        
+
         results_t = []
         d = {}
         for r in results.items():
@@ -59,14 +59,14 @@ class DataOrganizer(object):
                 tu.append((url, text))
             d = {'source_text': r[0], 'result': tu}
             results_t.append(d)
-            
-        
+
+
         self.df['google-search'] = [i for i in range(len(self.df))]
         for d, i in zip(self.df['cleaned_text'], range(len(self.df))):
             for r in results_t:
                 if str(r['source_text']) == str(d):
                     self.df['google-search'][i] = r['result']
-        
+
         q = []
         for gs in self.df['google-search']:
             types = dict((el, []) for el in list(self.domains))
@@ -74,19 +74,19 @@ class DataOrganizer(object):
                 _type = self.in_domain(result[0])
                 if _type != "": types[_type].append(result)
             q.append(types)
-            
+
         self.df['types'] = q
         return self.df
-    
+
     def top(self, edf, num=3):
         a = edf.drop(list(set(edf.keys()) - set(self.domains.keys())), axis=1)
-        
+
         hv_dict = {}
         for key, value in a.items():
             values = [v for v in value if len(v) != 0]
             hot_values = values[:3]
             hv_dict[key] = hot_values
-     
+
         return hv_dict
 
     #def wiki_summarize(self):
@@ -98,7 +98,7 @@ class SummarizeNER(object):
         self.data = df
         self.cleaned_data = self.get_cleaned_data()
         self.cleaned_phrases = self.get_ner_tags()
-        
+
     def get_cleaned_data(self):
         return [self.clean(text) for text in self.data['text']]
 
@@ -115,7 +115,7 @@ class SummarizeNER(object):
 
     def get_wiki_summary(self, sentences=4):
         wiki_summary = []
-        
+
         for phrase, i in zip(self.cleaned_phrases, range(len(self.cleaned_phrases))):
             if phrase != 'N/A':
                 print("Downloading wikipedia pages...".format(i+1, len(self.cleaned_phrases)), end="\r")
@@ -131,11 +131,11 @@ class SummarizeNER(object):
                     pass
             else:
                 summary = "No wikipedia page found"
-    
+
             wiki_summary.append(summary)
-            
+
         return wiki_summary
-    
+
     def clean(self, text, url=True, words_only=True, first_n_sent=(False, 4)):
         if url:
             text = re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
@@ -153,14 +153,14 @@ class SummarizeNER(object):
         sys.path.append('../preprocess')
         from nltk.tag.stanford import StanfordNERTagger
         st = StanfordNERTagger('../stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
-                      '../stanford-ner/stanford-ner.jar')        
-        
+                      '../stanford-ner/stanford-ner.jar')
+
         tokenized_list = [ct.split() for ct in self.cleaned_data]
         NERTags = st.tag_sents(tokenized_list)
-        
+
         tags = [nt for nt in NERTags]
         ids = [[i for a, i in zip(t, range(len(t))) if a[1] != "O"] for t in tags]
-        
+
         phrases = []
         for i, t in zip(ids, tags):
             phrase = ""
@@ -174,7 +174,7 @@ class SummarizeNER(object):
 
             phrases.append(tt)
         return phrases
-        
+
 
     if __name__ == '__main__':
         data_helper = DataAggregator()
