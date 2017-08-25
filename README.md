@@ -13,6 +13,9 @@ See more on [introduction slides](https://docs.google.com/presentation/d/18flIvw
   1. Download from [the official website](https://nlp.stanford.edu/software/stanford-ner-2017-06-09.zip).
   2. Unzip and place the `stanford-ner-xxxx-xx-xx` folder the project root path. The name of folder should also be **`stanford-ner/`**.
 
-## Configuration
-  1. First, copy `config-sample.json` and rename it to `config.json` in the same directory. Remember to fill the keys in `config.json`.
-  2. Second, we need to crawl twitter data, so run the script `crawlers/twitter_crawler.py`. It will automatically crawl data and save them to `dataset/twitter/` by default.
+## Usage
+1. Create a twitter and reddit account, follow the accounts that you are interested in.
+2. Copy `config-sample.json` and rename it to `config.json` in the same directory. Remember to fill the keys in `config.json`. (Go to your twitter/reddit developer console, create application and get keys.)
+3. We need to crawl twitter data, so run the script `crawlers/twitter_crawler.py`. It will automatically crawl data and save them to `dataset/twitter/` by default.
+4. You can customize data entities by modifying `domains.json` and `types.json`. (See [demo](https://github.com/YuChunLOL/Digestant/blob/master/demo/demo_howard.ipynb))
+5. Currently, you can execute `demo/demo_howard.ipynb` or other notebooks to see daily digest.
